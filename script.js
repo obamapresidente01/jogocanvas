@@ -21,7 +21,8 @@ var myGameArea = {
     canvas: document.getElementById("myCanvas"),
     start: function () {
         this.context = this.canvas.getContext("2d");
-        this.interval = setInterval(updateGameArea, 20);
+        this.frameNo = 0;
+        requestAnimationFrame(updateGameArea);
     },
     clear: function () {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -65,6 +66,9 @@ function updateGameArea() {
 
     // Desenha a nave
     drawNave();
+
+    // Solicita o próximo quadro de animação
+    requestAnimationFrame(updateGameArea);
 }
 
 function drawNave() {
