@@ -41,9 +41,10 @@ function updateGameArea() {
     myGameArea.clear();
 
     // Desenha a nave
+    myGamePiece.update();
     drawNave();
 }
 
 function drawNave() {
     myGameArea.context.drawImage(naveImg, myGamePiece.x, myGamePiece.y, myGamePiece.width, myGamePiece.height);
-}S
+}
