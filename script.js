@@ -8,9 +8,12 @@ var explosionImg = document.getElementById("explosionImg");
 
 var explosionFrame = 0;
 var isExplosion = false;
-var explosionFrameWidth = 64;  // Largura de cada quadro da explosão
-var explosionFrameHeight = 64; // Altura de cada quadro da explosão
-var totalExplosionFrames = 16; // Número total de quadros na imagem de explosão
+var explosionFrameWidth = 170.67;  // Largura de cada quadro da explosão na imagem original
+var explosionFrameHeight = 192; // Altura de cada quadro da explosão na imagem original
+var explosionRenderWidth = 32; // Largura de cada quadro da explosão redimensionado
+var explosionRenderHeight = 32; // Altura de cada quadro da explosão redimensionado
+var totalExplosionFrames = 6;  // Número total de quadros na imagem de explosão
+var framesPerRow = 3; // Número de quadros por linha
 
 // Variáveis para armazenar se as teclas de seta estão pressionadas
 var upPressed = false;
@@ -118,63 +121,80 @@ function drawNaveInimiga() {
 
 function drawExplosion() {
     var ctx = myGameArea.context;
-    var sx = explosionFrame * explosionFrameWidth;
-    var sy = 0;
-    ctx.drawImage(explosionImg, sx, sy, explosionFrameWidth, explosionFrameHeight, (myGamePiece.x + enemyGamePiece.x) / 2, (myGamePiece.y + enemyGamePiece.y) / 2, explosionFrameWidth, explosionFrameHeight);
-    explosionFrame++;
-    if (explosionFrame >= totalExplosionFrames) {
-        // Reinicia a animação e as naves após a explosão
-        isExplosion = false;
-        explosionFrame = 0;
-        myGamePiece = new component(30, 30, "red", 10, 120);
-        enemyGamePiece = new component(30, 30, "blue", 440, 120);
-    }
+    var sx = (explosionFrame % framesPerRow) * explosionFrameWidth;
+    var sy = Math.floor(explosionFrame / framesPerRow) * explosionFrameHeight;
+    var x = (myGamePiece.x + enemyGamePiece.x) / 2;
+    var y = (myGamePiece.y + enemyGamePiece.y) / 2;
+
+ctx.drawImage(explosionImg, sx, sy, explosionFrameWidth, explosionFrameHeight, x, y, explosionRenderWidth, explosionRenderHeight);
+
+explosionFrame++;
+if (explosionFrame >= totalExplosionFrames) {
+    // Reinicia a animação e as naves após a explosão
+    isExplosion = false;
+    explosionFrame = 0;
+    myGamePiece = new component(30, 30, "red", 10, 120);
+    enemyGamePiece = new component(30, 30, "blue", 440, 120);
+}
+var ctx = myGameArea.context;
+
+ctx.drawImage(explosionImg, sx, sy, explosionFrameWidth, explosionFrameHeight, x, y, explosionRenderWidth, explosionRenderHeight);
+
+explosionFrame++;
+if (explosionFrame >= totalExplosionFrames) {
+    // Reinicia a animação e as naves após a explosão
+    isExplosion = false;
+    explosionFrame = 0;
+    myGamePiece = new component(30, 30, "red", 10, 120);
+    enemyGamePiece = new component(30, 30, "blue", 440, 120);
+}
 }
 
 // Manipuladores de eventos para teclas de seta e teclas A, W, S, D
 function keyDownHandler(event) {
-    if (event.key == "ArrowUp") {
-        upPressed = true;
-    } else if (event.key == "ArrowDown") {
-        downPressed = true;
-    } else if (event.key == "ArrowLeft") {
-        leftPressed = true;
-    } else if (event.key == "ArrowRight") {
-        rightPressed = true;
-    } else if (event.key == "w" || event.key == "W") {
-        wPressed = true;
-    } else if (event.key == "a" || event.key == "A") {
-        aPressed = true;
-    } else if (event.key == "s" || event.key == "S") {
-        sPressed = true;
-    } else if (event.key == "d" || event.key == "D") {
-        dPressed = true;
-    }
+if (event.key == "ArrowUp") {
+    upPressed = true;
+} else if (event.key == "ArrowDown") {
+    downPressed = true;
+} else if (event.key == "ArrowLeft") {
+    leftPressed = true;
+} else if (event.key == "ArrowRight") {
+    rightPressed = true;
+} else if (event.key == "w" || event.key == "W") {
+    wPressed = true;
+} else if (event.key == "a" || event.key == "A") {
+    aPressed = true;
+} else if (event.key == "s" || event.key == "S") {
+    sPressed = true;
+} else if (event.key == "d" || event.key == "D") {
+    dPressed = true;
+}
 }
 
 function keyUpHandler(event) {
-    if (event.key == "ArrowUp") {
-        upPressed = false;
-    } else if (event.key == "ArrowDown") {
-        downPressed = false;
-    } else if (event.key == "ArrowLeft") {
-        leftPressed = false;
-    } else if (event.key == "ArrowRight") {
-        rightPressed = false;
-    } else if (event.key == "w" || event.key == "W") {
-        wPressed = false;
-    } else if (event.key == "a" || event.key == "A") {
-        aPressed = false;
-    } else if (event.key == "s" || event.key == "S") {
-        sPressed = false;
-    } else if (event.key == "d" || event.key == "D") {
-        dPressed = false;
-    }
+if (event.key == "ArrowUp") {
+    upPressed = false;
+} else if (event.key == "ArrowDown") {
+    downPressed = false;
+} else if (event.key == "ArrowLeft") {
+    leftPressed = false;
+} else if (event.key == "ArrowRight") {
+    rightPressed = false;
+} else if (event.key == "w" || event.key == "W") {
+    wPressed = false;
+} else if (event.key == "a" || event.key == "A") {
+    aPressed = false;
+} else if (event.key == "s" || event.key == "S") {
+    sPressed = false;
+} else if (event.key == "d" || event.key == "D") {
+    dPressed = false;
+}
 }
 
 function checkCollision(piece1, piece2) {
-    return !(piece1.x > piece2.x + piece2.width ||
-             piece1.x + piece1.width < piece2.x ||
-             piece1.y > piece2.y + piece2.height ||
-             piece1.y + piece1.height < piece2.y);
+return !(piece1.x > piece2.x + piece2.width ||
+    piece1.x + piece1.width < piece2.x ||
+    piece1.y > piece2.y + piece2.height ||
+    piece1.y + piece1.height < piece2.y);
 }
+

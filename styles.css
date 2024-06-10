@@ -16,6 +16,8 @@ canvas {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#naveImg {
-    display: none; /* Para ocultar a imagem carregada */
+#naveImg,
+#naveInimigaImg,
+#explosionImg {
+    display: none; /* Para ocultar as imagens carregadas */
 }
