@@ -1,11 +1,12 @@
 var myGamePiece;
 var enemyGamePiece;
-var naveImg = document.getElementById("naveImg");
-var naveInimigaImg = document.getElementById("naveInimigaImg");
-var explosionImg = document.getElementById("explosionImg");
+var naveImg = new Image();
+naveImg.src = "nave.png";
+var naveInimigaImg = new Image();
+naveInimigaImg.src = "nave_inimiga.png";
+var explosionImg = new Image();
+explosionImg.src = "explosion.png";
 
-var upPressed = false;
-var downPressed = false;
 var leftPressed = false;
 var rightPressed = false;
 
@@ -13,8 +14,9 @@ var aPressed = false;
 var dPressed = false;
 
 function startGame() {
-    myGamePiece = new component(30, 30, "red", 10, 120);
-    enemyGamePiece = new component(30, 30, "blue", 440, 120);
+    console.log("O jogo está começando!");
+    myGamePiece = new component(30, 30, naveImg, 10, 120);
+    enemyGamePiece = new component(30, 30, naveInimigaImg, 440, 120);
     myGameArea.start();
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
@@ -24,22 +26,32 @@ var myGameArea = {
     canvas: document.getElementById("myCanvas"),
     start: function () {
         this.context = this.canvas.getContext("2d");
+        this.context.fillStyle = "black";
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
         requestAnimationFrame(updateGameArea);
+    },
+    clear: function () {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.context.fillStyle = "black";
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }
 
-function component(width, height, color, x, y) {
+function component(width, height, image, x, y) {
     this.width = width;
     this.height = height;
     this.x = x;
     this.y = y;
-    this.color = color;
+    this.image = image;
+    this.update = function () {
+        var ctx = myGameArea.context;
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
 }
 
 function updateGameArea() {
     myGameArea.clear();
 
-    // Movimenta a nave de acordo com as teclas pressionadas
     if (leftPressed && myGamePiece.x > 0) {
         myGamePiece.x -= 1;
     }
@@ -47,7 +59,6 @@ function updateGameArea() {
         myGamePiece.x += 1;
     }
 
-    // Movimenta a nave inimiga de acordo com as teclas pressionadas
     if (aPressed && enemyGamePiece.x > 0) {
         enemyGamePiece.x -= 1;
     }
@@ -55,52 +66,36 @@ function updateGameArea() {
         enemyGamePiece.x += 1;
     }
 
-    // Verifica colisão
     if (checkCollision(myGamePiece, enemyGamePiece)) {
-        // Colisão detectada, inicia a explosão
-        isExplosion = true;
+        console.log("Colisão detectada!");
     }
 
-    // Desenha as naves
-    drawNave();
-    drawNaveInimiga();
+    myGamePiece.update();
+    enemyGamePiece.update();
 
-    // Solicita o próximo quadro de animação
     requestAnimationFrame(updateGameArea);
 }
 
-function drawNave() {
-    var ctx = myGameArea.context;
-    ctx.fillStyle = myGamePiece.color;
-    ctx.fillRect(myGamePiece.x, myGamePiece.y, myGamePiece.width, myGamePiece.height);
-}
-
-function drawNaveInimiga() {
-    var ctx = myGameArea.context;
-    ctx.fillStyle = enemyGamePiece.color;
-    ctx.fillRect(enemyGamePiece.x, enemyGamePiece.y, enemyGamePiece.width, enemyGamePiece.height);
-}
-
 function keyDownHandler(event) {
-    if (event.key == "ArrowLeft") {
+    if (event.key === "ArrowLeft") {
         leftPressed = true;
-    } else if (event.key == "ArrowRight") {
+    } else if (event.key === "ArrowRight") {
         rightPressed = true;
-    } else if (event.key == "a" || event.key == "A") {
+    } else if (event.key === "a" || event.key === "A") {
         aPressed = true;
-    } else if (event.key == "d" || event.key == "D") {
+    } else if (event.key === "d" || event.key === "D") {
         dPressed = true;
     }
 }
 
 function keyUpHandler(event) {
-    if (event.key == "ArrowLeft") {
+    if (event.key === "ArrowLeft") {
         leftPressed = false;
-    } else if (event.key == "ArrowRight") {
+    } else if (event.key === "ArrowRight") {
         rightPressed = false;
-    } else if (event.key == "a" || event.key == "A") {
+    } else if (event.key === "a" || event.key === "A") {
         aPressed = false;
-    } else if (event.key == "d" || event.key == "D") {
+    } else if (event.key === "d" || event.key === "D") {
         dPressed = false;
     }
 }
@@ -111,8 +106,3 @@ function checkCollision(piece1, piece2) {
         piece1.y > piece2.y + piece2.height ||
         piece1.y + piece1.height < piece2.y);
 }
-
-function drawExplosion() {
-    // Implemente a função drawExplosion aqui
-}
-a
