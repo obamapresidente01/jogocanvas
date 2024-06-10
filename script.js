@@ -34,11 +34,6 @@ function component(width, height, color, x, y) {
     this.x = x;
     this.y = y;
     this.color = color;
-    this.update = function () {
-        var ctx = myGameArea.context;
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
 }
 
 function updateGameArea() {
@@ -75,11 +70,15 @@ function updateGameArea() {
 }
 
 function drawNave() {
-    myGamePiece.update();
+    var ctx = myGameArea.context;
+    ctx.fillStyle = myGamePiece.color;
+    ctx.fillRect(myGamePiece.x, myGamePiece.y, myGamePiece.width, myGamePiece.height);
 }
 
 function drawNaveInimiga() {
-    enemyGamePiece.update();
+    var ctx = myGameArea.context;
+    ctx.fillStyle = enemyGamePiece.color;
+    ctx.fillRect(enemyGamePiece.x, enemyGamePiece.y, enemyGamePiece.width, enemyGamePiece.height);
 }
 
 function keyDownHandler(event) {
@@ -112,3 +111,8 @@ function checkCollision(piece1, piece2) {
         piece1.y > piece2.y + piece2.height ||
         piece1.y + piece1.height < piece2.y);
 }
+
+function drawExplosion() {
+    // Implemente a função drawExplosion aqui
+}
+a
