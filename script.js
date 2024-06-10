@@ -9,7 +9,6 @@ explosionImg.src = "explosion.png";
 
 var leftPressed = false;
 var rightPressed = false;
-
 var aPressed = false;
 var dPressed = false;
 
@@ -24,8 +23,8 @@ var framesPerRow = 3;
 
 function startGame() {
     console.log("O jogo está começando!");
-    myGamePiece = new component(30, 30, naveImg, 225, 240); // Nave do jogador na parte inferior
-    enemyGamePiece = new component(30, 30, naveInimigaImg, 225, 0); // Nave inimiga na parte superior
+    myGamePiece = new component(50, 50, naveImg, 225, 900); // Nave do jogador na parte inferior
+    enemyGamePiece = new component(50, 50, naveInimigaImg, 225, 0); // Nave inimiga na parte superior
     myGameArea.start();
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
@@ -65,17 +64,17 @@ function updateGameArea() {
         drawExplosion();
     } else {
         if (leftPressed && myGamePiece.x > 0) {
-            myGamePiece.x -= 2; // Movendo mais rápido
+            myGamePiece.x -= 5; // Movendo mais rápido
         }
         if (rightPressed && myGamePiece.x < myGameArea.canvas.width - myGamePiece.width) {
-            myGamePiece.x += 2; // Movendo mais rápido
+            myGamePiece.x += 5; // Movendo mais rápido
         }
 
         if (aPressed && enemyGamePiece.x > 0) {
-            enemyGamePiece.x -= 1; // Movendo mais devagar
+            enemyGamePiece.x -= 2; // Movendo mais devagar
         }
         if (dPressed && enemyGamePiece.x < myGameArea.canvas.width - enemyGamePiece.width) {
-            enemyGamePiece.x += 1; // Movendo mais devagar
+            enemyGamePiece.x += 2; // Movendo mais devagar
         }
 
         if (checkCollision(myGamePiece, enemyGamePiece)) {
@@ -133,7 +132,7 @@ function drawExplosion() {
     explosionFrame++;
     if (explosionFrame >= totalExplosionFrames) {
         isExplosion = false;
-        myGamePiece = new component(30, 30, naveImg, 225, 240); // Reposiciona a nave do jogador
-        enemyGamePiece = new component(30, 30, naveInimigaImg, 225, 0); // Reposiciona a nave inimiga
+        myGamePiece = new component(50, 50, naveImg, 225, 900); // Reposiciona a nave do jogador
+        enemyGamePiece = new component(50, 50, naveInimigaImg, 225, 0); // Reposiciona a nave inimiga
     }
 }
