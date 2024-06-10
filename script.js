@@ -13,10 +13,19 @@ var rightPressed = false;
 var aPressed = false;
 var dPressed = false;
 
+var isExplosion = false;
+var explosionFrame = 0;
+var explosionFrameWidth = 170.67; // Tamanho do quadro individual da explosão
+var explosionFrameHeight = 192;
+var explosionRenderWidth = 64;
+var explosionRenderHeight = 64;
+var totalExplosionFrames = 6;
+var framesPerRow = 3;
+
 function startGame() {
     console.log("O jogo está começando!");
-    myGamePiece = new component(30, 30, naveImg, 10, 120);
-    enemyGamePiece = new component(30, 30, naveInimigaImg, 440, 120);
+    myGamePiece = new component(30, 30, naveImg, 225, 240); // Nave do jogador na parte inferior
+    enemyGamePiece = new component(30, 30, naveInimigaImg, 225, 0); // Nave inimiga na parte superior
     myGameArea.start();
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
@@ -52,26 +61,31 @@ function component(width, height, image, x, y) {
 function updateGameArea() {
     myGameArea.clear();
 
-    if (leftPressed && myGamePiece.x > 0) {
-        myGamePiece.x -= 1;
-    }
-    if (rightPressed && myGamePiece.x < myGameArea.canvas.width - myGamePiece.width) {
-        myGamePiece.x += 1;
-    }
+    if (isExplosion) {
+        drawExplosion();
+    } else {
+        if (leftPressed && myGamePiece.x > 0) {
+            myGamePiece.x -= 2; // Movendo mais rápido
+        }
+        if (rightPressed && myGamePiece.x < myGameArea.canvas.width - myGamePiece.width) {
+            myGamePiece.x += 2; // Movendo mais rápido
+        }
 
-    if (aPressed && enemyGamePiece.x > 0) {
-        enemyGamePiece.x -= 1;
-    }
-    if (dPressed && enemyGamePiece.x < myGameArea.canvas.width - enemyGamePiece.width) {
-        enemyGamePiece.x += 1;
-    }
+        if (aPressed && enemyGamePiece.x > 0) {
+            enemyGamePiece.x -= 1; // Movendo mais devagar
+        }
+        if (dPressed && enemyGamePiece.x < myGameArea.canvas.width - enemyGamePiece.width) {
+            enemyGamePiece.x += 1; // Movendo mais devagar
+        }
 
-    if (checkCollision(myGamePiece, enemyGamePiece)) {
-        console.log("Colisão detectada!");
-    }
+        if (checkCollision(myGamePiece, enemyGamePiece)) {
+            isExplosion = true;
+            explosionFrame = 0;
+        }
 
-    myGamePiece.update();
-    enemyGamePiece.update();
+        myGamePiece.update();
+        enemyGamePiece.update();
+    }
 
     requestAnimationFrame(updateGameArea);
 }
@@ -105,4 +119,21 @@ function checkCollision(piece1, piece2) {
         piece1.x + piece1.width < piece2.x ||
         piece1.y > piece2.y + piece2.height ||
         piece1.y + piece1.height < piece2.y);
+}
+
+function drawExplosion() {
+    var ctx = myGameArea.context;
+    var sx = (explosionFrame % framesPerRow) * explosionFrameWidth;
+    var sy = Math.floor(explosionFrame / framesPerRow) * explosionFrameHeight;
+    var x = ((myGamePiece.x + myGamePiece.width / 2) + (enemyGamePiece.x + enemyGamePiece.width / 2)) / 2 - explosionRenderWidth / 2;
+    var y = ((myGamePiece.y + myGamePiece.height / 2) + (enemyGamePiece.y + enemyGamePiece.height / 2)) / 2 - explosionRenderHeight / 2;
+
+    ctx.drawImage(explosionImg, sx, sy, explosionFrameWidth, explosionFrameHeight, x, y, explosionRenderWidth, explosionRenderHeight);
+
+    explosionFrame++;
+    if (explosionFrame >= totalExplosionFrames) {
+        isExplosion = false;
+        myGamePiece = new component(30, 30, naveImg, 225, 240); // Reposiciona a nave do jogador
+        enemyGamePiece = new component(30, 30, naveInimigaImg, 225, 0); // Reposiciona a nave inimiga
+    }
 }
