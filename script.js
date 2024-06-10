@@ -1,11 +1,14 @@
 var myGamePiece;
 var enemyGamePiece;
+var clouds = [];
 var naveImg = new Image();
 naveImg.src = "nave.png";
 var naveInimigaImg = new Image();
 naveInimigaImg.src = "nave_inimiga.png";
 var explosionImg = new Image();
 explosionImg.src = "explosion.png";
+var cloudImg = new Image();
+cloudImg.src = "cloud.png";
 
 var leftPressed = false;
 var rightPressed = false;
@@ -26,6 +29,7 @@ function startGame() {
     myGamePiece = new component(50, 50, naveImg, 225, 900); // Nave do jogador na parte inferior
     enemyGamePiece = new component(50, 50, naveInimigaImg, 225, 0); // Nave inimiga na parte superior
     myGameArea.start();
+    generateClouds();
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
 }
@@ -54,6 +58,20 @@ function component(width, height, image, x, y) {
     this.update = function () {
         var ctx = myGameArea.context;
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
+    this.newPos = function () {
+        this.y += 1;
+        if (this.y > myGameArea.canvas.height) {
+            this.y = -this.height;
+        }
+    }
+}
+
+function generateClouds() {
+    for (var i = 0; i < 5; i++) {
+        var x = Math.random() * myGameArea.canvas.width;
+        var y = Math.random() * myGameArea.canvas.height;
+        clouds.push(new component(100, 50, cloudImg, x, y));
     }
 }
 
@@ -84,6 +102,12 @@ function updateGameArea() {
 
         myGamePiece.update();
         enemyGamePiece.update();
+    }
+
+    // Atualiza e desenha nuvens
+    for (var i = 0; i < clouds.length; i++) {
+        clouds[i].newPos();
+        clouds[i].update();
     }
 
     requestAnimationFrame(updateGameArea);
