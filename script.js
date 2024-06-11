@@ -1,6 +1,7 @@
 var myGamePiece;
 var enemyGamePiece;
 var clouds = [];
+var stars = [];
 var naveImg = new Image();
 naveImg.src = "nave.png";
 var naveInimigaImg = new Image();
@@ -9,6 +10,8 @@ var explosionImg = new Image();
 explosionImg.src = "explosion.png";
 var cloudImg = new Image();
 cloudImg.src = "cloud.png";
+var starImg = new Image(); // Adicionando imagem da estrela
+starImg.src = "star.png"; // Coloque o caminho correto para a imagem da estrela
 
 var leftPressed = false;
 var rightPressed = false;
@@ -30,6 +33,7 @@ function startGame() {
     enemyGamePiece = new component(50, 50, naveInimigaImg, 225, 0); // Nave inimiga na parte superior
     myGameArea.start();
     generateClouds();
+    generateStars(); // Adicionando estrelas ao iniciar o jogo
     document.addEventListener("keydown", keyDownHandler, false);
     document.addEventListener("keyup", keyUpHandler, false);
 }
@@ -75,6 +79,14 @@ function generateClouds() {
     }
 }
 
+function generateStars() {
+    for (var i = 0; i < 20; i++) { // Adicionando 20 estrelas
+        var x = Math.random() * myGameArea.canvas.width;
+        var y = Math.random() * myGameArea.canvas.height;
+        stars.push(new component(5, 5, starImg, x, y)); // Tamanho das estrelas definido como 5x5
+    }
+}
+
 function updateGameArea() {
     myGameArea.clear();
 
@@ -104,10 +116,20 @@ function updateGameArea() {
         enemyGamePiece.update();
     }
 
-    // Atualiza e desenha nuvens
+    // Desenha e move nuvens
     for (var i = 0; i < clouds.length; i++) {
         clouds[i].newPos();
         clouds[i].update();
+    }
+
+    // Desenha e move estrelas
+    for (var i = 0; i < stars.length; i++) {
+        stars[i].y += 0.5; // Alterando a velocidade de descida das estrelas
+        if (stars[i].y > myGameArea.canvas.height) {
+            stars[i].y = -5; // Reposicionando estrelas quando saem da tela
+            stars[i].x = Math.random() * myGameArea.canvas.width;
+        }
+        stars[i].update();
     }
 
     requestAnimationFrame(updateGameArea);
